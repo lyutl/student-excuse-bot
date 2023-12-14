@@ -64,8 +64,8 @@ class Bot:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text="Привет! Это ... введите ПИСЬМО",
                                        reply_markup=ReplyKeyboardMarkup([[KeyboardButton('ПИСЬМО')]],
-                                              resize_keyboard=True,
-                                              one_time_keyboard=True))
+                                                                        resize_keyboard=True,
+                                                                        one_time_keyboard=True))
 
     @staticmethod
     async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
