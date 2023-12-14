@@ -4,7 +4,7 @@ from config import TOKEN
 from collections import defaultdict
 from dateutil.parser import parse
 from telegram import (Update,
-                      InlineKeyboardMarkup, InlineKeyboardButton)
+                      InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup)
 from telegram.ext import (ApplicationBuilder,
                           CallbackQueryHandler,
                           CommandHandler,
@@ -62,8 +62,10 @@ class Bot:
         """Send message on /start and ask user for code word."""
 
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="Привет! Это бот, который составит за Вас письмо преподавателю!"
-                                            "Введите ПИСЬМО, чтобы начать.")
+                                       text="Привет! Это ... введите ПИСЬМО",
+                                       reply_markup=ReplyKeyboardMarkup([[KeyboardButton('ПИСЬМО')]],
+                                              resize_keyboard=True,
+                                              one_time_keyboard=True))
 
     @staticmethod
     async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
