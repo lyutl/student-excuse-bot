@@ -62,7 +62,7 @@ class Bot:
         """Send message on /start and ask user for code word."""
 
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="Привет! Это ... введите ПИСЬМО",
+                                       text="Привет! Чтобы начать, введи кодовое слово ПИСЬМО",
                                        reply_markup=ReplyKeyboardMarkup([[KeyboardButton('ПИСЬМО')]],
                                                                         resize_keyboard=True,
                                                                         one_time_keyboard=True))
