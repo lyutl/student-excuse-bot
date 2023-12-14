@@ -88,7 +88,7 @@ class Bot:
             return 'receiver'
 
     async def receiver(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
-        """Ask for name of letter's receiver"""
+        """Ask for name of letter's receiver."""
 
         name = update.message.text.title()
 
@@ -99,7 +99,7 @@ class Bot:
         return 'date'
 
     async def date(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
-        """Ask for date"""
+        """Ask for date."""
         received_message = update.message.text.capitalize()
 
         self.choices['name'] = received_message.title()
@@ -109,7 +109,7 @@ class Bot:
         return 'class'
 
     async def classes(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
-        """Ask for name of class"""
+        """Ask for name of class."""
 
         received_message = update.message.text.capitalize()
 
