@@ -19,7 +19,6 @@ COLUMN_NAMES = list(df.columns[1:])
 COLUMN_DICT = dict(zip(COLUMN_NAMES, CONST_LIST))
 
 
-# reason is from the user --> get postponement options --> user chooses --> get people options
 class Option:
     """A class for filtering options."""
 
