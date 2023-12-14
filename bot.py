@@ -34,7 +34,6 @@ class Bot:
 
     id2users = defaultdict(dict)
     choices = {}
-    multiple_buttons = []
 
     def __init__(self, token):
         self.app = ApplicationBuilder().token(TOKEN).build()
@@ -191,8 +190,6 @@ class Bot:
 
     async def say_summary(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Display the chosen template and end the conversation."""
-
-        self.multiple_buttons.clear()
 
         query = update.callback_query
 
