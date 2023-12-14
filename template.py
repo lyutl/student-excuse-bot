@@ -22,16 +22,16 @@ COLUMN_DICT = dict(zip(COLUMN_NAMES, CONST_LIST))
 # reason is from the user --> get postponement options --> user chooses --> get people options
 class Option:
     def __init__(self):
-        self.postpone_options = []
+        self.reason_options = []
         self.people_options = []
 
-    def get_post_options(self, reason_choice: str) -> set:
-        self.postpone_options = set(df.query(f"{COLUMN_NAMES[0]}=='{reason_choice}'")[COLUMN_NAMES[1]])
-        return self.postpone_options
+    def get_reason_options(self, post_choice: str) -> set:
+        self.reason_options = set(df.query(f"{COLUMN_NAMES[1]}=='{post_choice}'")[COLUMN_NAMES[0]])
+        return self.reason_options
 
-    def get_ppl_options(self, reason_choice: str, post_choice: str) -> set:
-        self.people_options = set(df.query(f"Reason=='{reason_choice}'").query(
-            f"{COLUMN_NAMES[1]}=='{post_choice}'")[COLUMN_NAMES[2]])
+    def get_ppl_options(self, post_choice: str, reason_choice: str) -> set:
+        self.people_options = set(df.query(f"{COLUMN_NAMES[1]}=='{post_choice}'").query(
+            f"{COLUMN_NAMES[0]}=='{reason_choice}'")[COLUMN_NAMES[2]])
         return self.people_options
 
 

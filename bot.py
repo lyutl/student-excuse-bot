@@ -47,8 +47,8 @@ class Bot:
                 'receiver': [MessageHandler(filters.TEXT & (~filters.COMMAND), self.receiver)],
                 'date': [MessageHandler(filters.TEXT & (~filters.COMMAND), self.date)],
                 'class': [MessageHandler(filters.TEXT & (~filters.COMMAND), self.classes)],
-                'reason': [MessageHandler(filters.TEXT & (~filters.COMMAND), self.choose_reason)],
-                'postpone': [CallbackQueryHandler(self.choose_postpone)],
+                'postpone': [MessageHandler(filters.TEXT & (~filters.COMMAND), self.choose_postpone)],
+                'reason': [CallbackQueryHandler(self.choose_reason)],
                 'people': [CallbackQueryHandler(self.choose_people)],
                 'summary': [CallbackQueryHandler(self.say_summary)]
             },
@@ -62,7 +62,8 @@ class Bot:
         """Send message on /start and ask user for code word."""
 
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text="Привет! Это ... введите ПИСЬМО",
+                                       text="Привет! Это бот, который составит письмо преподавателю вместо Вас! "
+                                            "Чтобы начать, введите ПИСЬМО",
                                        reply_markup=ReplyKeyboardMarkup([[KeyboardButton('ПИСЬМО')]],
                                                                         resize_keyboard=True,
                                                                         one_time_keyboard=True))
@@ -118,26 +119,6 @@ class Bot:
 
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text='Какое название у дисциплины?')
-        return 'reason'
-
-    async def choose_reason(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
-        """Show buttons with reason options."""
-
-        buttons = []
-
-        received_message = update.message.text.capitalize()
-
-        self.choices['class'] = received_message.capitalize()
-
-        for reason in COLUMN_DICT['Reason']:
-            buttons.append([InlineKeyboardButton(params['reason'][reason],
-                                                 callback_data=reason)])
-
-        markup = InlineKeyboardMarkup(buttons)
-
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text='Выберите причину для письма:',
-                                       reply_markup=markup)
         return 'postpone'
 
     async def choose_postpone(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
@@ -145,22 +126,42 @@ class Bot:
 
         buttons = []
 
-        query = update.callback_query
+        received_message = update.message.text.capitalize()
 
-        await query.answer()
-        await query.edit_message_text(text=f"Ваш выбор: {params['reason'][query.data.lower()]}")
+        self.choices['class'] = received_message.capitalize()
 
-        self.choices['reason'] = query.data.lower()
-
-        postpone_options = option.get_post_options(query.data.lower())
-
-        for post in postpone_options:
-            buttons.append([InlineKeyboardButton(params['post'][post], callback_data=post)])
+        for post in COLUMN_DICT['Postponement']:
+            buttons.append([InlineKeyboardButton(params['post'][post],
+                                                 callback_data=post)])
 
         markup = InlineKeyboardMarkup(buttons)
 
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text='Выберите тип переноса:',
+                                       reply_markup=markup)
+        return 'reason'
+
+    async def choose_reason(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> str:
+        """Show buttons with reason options."""
+
+        buttons = []
+
+        query = update.callback_query
+
+        await query.answer()
+        await query.edit_message_text(text=f"Ваш выбор: {params['post'][query.data.lower()]}")
+
+        self.choices['postpone'] = query.data.lower()
+
+        reason_options = option.get_reason_options(query.data.lower())
+
+        for reason in reason_options:
+            buttons.append([InlineKeyboardButton(params['reason'][reason], callback_data=reason)])
+
+        markup = InlineKeyboardMarkup(buttons)
+
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text='Выберите причину для письма:',
                                        reply_markup=markup)
         return 'people'
 
@@ -172,11 +173,11 @@ class Bot:
         query = update.callback_query
 
         await query.answer()
-        await query.edit_message_text(text=f"Ваш выбор: {params['post'][query.data.lower()]}")
+        await query.edit_message_text(text=f"Ваш выбор: {params['reason'][query.data.lower()]}")
 
-        self.choices['postpone'] = query.data.lower()
+        self.choices['reason'] = query.data.lower()
 
-        people_options = option.get_ppl_options(self.choices.get('reason'), query.data.lower())
+        people_options = option.get_ppl_options(self.choices.get('postpone'), query.data.lower())
 
         for ppl in people_options:
             buttons.append([InlineKeyboardButton(params['people'][ppl], callback_data=ppl)])
@@ -210,7 +211,6 @@ class Bot:
 
         chosen_template = ''
         template_parts = [START, got_template, END]
-        print(template_parts)
         for part in template_parts:
             chosen_template += change_placeholder(part, self.choices)
 
